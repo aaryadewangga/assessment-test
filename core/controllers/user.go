@@ -6,6 +6,7 @@ import (
 	"aegis/assessment-test/core/repository"
 	"aegis/assessment-test/core/repository/models"
 	hash "aegis/assessment-test/utils/encrypt"
+	"context"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -44,7 +45,7 @@ func (u *UserController) Register() echo.HandlerFunc {
 				constant.InternalServerError(constant.CodeErrInternalServer, "failed to hash password", err))
 		}
 
-		err = u.userRepo.InsertNewUser(c.Request().Context(), &models.User{
+		err = u.userRepo.InsertNewUser(context.Background(), &models.UserSchema{
 			Name:     registerReq.Name,
 			Username: registerReq.Username,
 			Password: hashPassword,

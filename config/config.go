@@ -17,7 +17,8 @@ type Config struct {
 	DBTimezone   string `envconfig:"DB_PG_TZ" default:"Asia/Jakarta"`
 
 	// JWT secret
-	JWTPublicKey string `envconfig:"JWT_PUBLIC_KEY" default:""`
+	JWTPrivateKey string `envconfig:"JWT_PRIVATE_KEY" default:""`
+	JWTPublicKey  string `envconfig:"JWT_PUBLIC_KEY" default:""`
 }
 
 func Get() *Config {

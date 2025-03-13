@@ -8,8 +8,8 @@ import (
 )
 
 type UserRepository interface {
-	InsertNewUser(ctx context.Context, user *models.User) error
-	GetUserByUsername(ctx context.Context, username string) (*models.User, error)
+	InsertNewUser(ctx context.Context, user *models.UserSchema) error
+	GetUserByUsername(ctx context.Context, username string) (*models.UserSchema, error)
 }
 
 type userRepository struct {
@@ -20,13 +20,13 @@ func NewUserRepository(db *pg.DB) UserRepository {
 	return &userRepository{db: db}
 }
 
-func (u *userRepository) InsertNewUser(ctx context.Context, user *models.User) error {
+func (u *userRepository) InsertNewUser(ctx context.Context, user *models.UserSchema) error {
 	_, err := u.db.Model(user).Context(ctx).Insert()
 	return err
 }
 
-func (u *userRepository) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
-	user := new(models.User)
+func (u *userRepository) GetUserByUsername(ctx context.Context, username string) (*models.UserSchema, error) {
+	user := new(models.UserSchema)
 
 	if err := u.db.Model(user).
 		Context(ctx).

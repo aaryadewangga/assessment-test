@@ -61,3 +61,19 @@ func InternalServerError(code interface{}, msg interface{}, data interface{}) Er
 		Message: msg,
 	}
 }
+
+func UnauthorizeError(code interface{}, msg interface{}, data interface{}) ErrResponse {
+	if code == nil {
+		code = http.StatusUnauthorized
+	}
+	if msg == nil {
+		msg = "unauthorize"
+	}
+	if data == nil {
+		data = nil
+	}
+	return ErrResponse{
+		Code:    code,
+		Message: msg,
+	}
+}
