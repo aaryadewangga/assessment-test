@@ -1,0 +1,11 @@
+-- migrate:up
+CREATE TABLE _products 
+(
+    "ID" SERIAL PRIMARY KEY,
+    "PRODUCT_NAME" VARCHAR(255) UNIQUE NOT NULL,
+    "PRICE" VARCHAR(50) NOT NULL,
+    "STOCK" VARCHAR(50) NOT NULL
+);
+
+-- migrate:down
+DROP TABLE IF EXISTS _products;

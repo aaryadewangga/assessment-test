@@ -2,7 +2,8 @@ package models
 
 import "time"
 
-type User struct {
+type UserSchema struct {
+	//lint:ignore U1000 This field is used by ORM
 	tableName struct{}  `pg:"_users"`
 	ID        int       `pg:"ID,pk"`
 	Name      string    `pg:"NAME"`
