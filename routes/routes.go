@@ -10,12 +10,13 @@ import (
 )
 
 func RegisterPath(
-	cfg *config.Config,
 	e *echo.Echo,
+	cfg *config.Config,
+	jwtHandler *midd.Jwt,
 	userCon *controllers.UserController,
 	authCon *controllers.AuthController,
 	productCon *controllers.ProductController,
-	jwtHandler *midd.Jwt,
+	trxCon *controllers.TransactionController,
 ) {
 
 	// Initial JWT
@@ -42,4 +43,11 @@ func RegisterPath(
 
 	// Cashier & Admin Routes
 	e.GET("/products", productCon.GetProduct(), jwtMiddleware)
+
+	trx := e.Group("/transactions", jwtMiddleware)
+	trx.POST("/create", trxCon.CreateTransaction(), jwtMiddleware)
+	trx.GET("/list", trxCon.GetAllTransactions(), jwtMiddleware)
+	trx.GET("/details", trxCon.GetTransactionDetailsById(), jwtMiddleware)
+	trx.GET("/generate/pdf", trxCon.GetTransactionPDF(), jwtMiddleware)
+	trx.GET("/generate/excel", trxCon.GetTransactionExcel(), jwtMiddleware)
 }

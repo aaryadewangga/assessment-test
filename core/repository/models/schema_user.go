@@ -5,7 +5,7 @@ import "time"
 type UserSchema struct {
 	//lint:ignore U1000 This field is used by ORM
 	tableName struct{}  `pg:"_users"`
-	ID        int       `pg:"ID,pk"`
+	ID        string    `pg:"ID,pk,type:uuid"`
 	Name      string    `pg:"NAME"`
 	Username  string    `pg:"USERNAME"`
 	Password  string    `pg:"PASSWORD"`
