@@ -34,21 +34,24 @@ func main() {
 
 	userRepo := repository.NewUserRepository(db)
 	productRepo := repository.NewProductRepository(db)
+	trxRepo := repository.NewTransactionRepository(db)
 
 	userCon := controllers.NewUserController(userRepo)
 	authCon := controllers.NewAuthController(cfg, userRepo, jwtDeps)
 	productCon := controllers.NewProductController(productRepo)
+	trxCon := controllers.NewTransactionController(trxRepo, userRepo)
 
 	e := echo.New()
 	e.Validator = &CustomValidator{validator: validator.New()}
 
 	routes.RegisterPath(
-		cfg,
 		e,
+		cfg,
+		jwtDeps,
 		userCon,
 		authCon,
 		productCon,
-		jwtDeps,
+		trxCon,
 	)
 
 	logrus.Fatal(e.Start(fmt.Sprintf(":%s", cfg.AppPort)))

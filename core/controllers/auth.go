@@ -5,7 +5,6 @@ import (
 	"aegis/assessment-test/core/constant"
 	"aegis/assessment-test/core/entity"
 	"aegis/assessment-test/core/repository"
-	"aegis/assessment-test/utils/converter"
 	"aegis/assessment-test/utils/encrypt"
 	"aegis/assessment-test/utils/middleware"
 	"context"
@@ -61,7 +60,7 @@ func (a *AuthController) Login() echo.HandlerFunc {
 		}
 
 		claims := middleware.Claims{
-			UserId: converter.IntToString(user.ID),
+			UserId: user.ID,
 			Role:   user.Role,
 		}
 

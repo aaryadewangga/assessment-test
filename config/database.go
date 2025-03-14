@@ -7,6 +7,22 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type queryLogger struct{}
+
+func (q queryLogger) BeforeQuery(ctx context.Context, evt *pg.QueryEvent) (context.Context, error) {
+	return ctx, nil
+}
+
+func (q queryLogger) AfterQuery(ctx context.Context, evt *pg.QueryEvent) error {
+	query, err := evt.FormattedQuery()
+	if err != nil {
+		log.Errorf("error formatting query: %v", err)
+		return err
+	}
+	log.Infof("executed query: %s", query)
+	return nil
+}
+
 func NewConnPG() *pg.DB {
 	cfg := Get()
 	return NewWithOption(cfg)
@@ -30,6 +46,8 @@ func NewWithOption(cfg *Config) *pg.DB {
 	if err := db.Ping(context.Background()); err != nil {
 		log.Fatalf(`failed to ping DB instance, err: %s`, err.Error())
 	}
+
+	db.AddQueryHook(queryLogger{})
 
 	return db
 }

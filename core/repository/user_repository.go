@@ -10,6 +10,7 @@ import (
 type UserRepository interface {
 	InsertNewUser(ctx context.Context, user *models.UserSchema) error
 	GetUserByUsername(ctx context.Context, username string) (*models.UserSchema, error)
+	GetUserById(ctx context.Context, id string) (*models.UserSchema, error)
 }
 
 type userRepository struct {
@@ -31,6 +32,20 @@ func (u *userRepository) GetUserByUsername(ctx context.Context, username string)
 	if err := u.db.Model(user).
 		Context(ctx).
 		Where("? = ?", pg.Ident("USERNAME"), username).
+		Limit(1).
+		Select(); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (u *userRepository) GetUserById(ctx context.Context, id string) (*models.UserSchema, error) {
+	user := new(models.UserSchema)
+
+	if err := u.db.Model(user).
+		Context(ctx).
+		Where("? = ?", pg.Ident("ID"), id).
 		Limit(1).
 		Select(); err != nil {
 		return nil, err

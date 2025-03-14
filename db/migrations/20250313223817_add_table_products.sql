@@ -1,0 +1,14 @@
+-- migrate:up
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE _products
+(
+    "ID" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    "PRODUCT_NAME" VARCHAR(255) UNIQUE NOT NULL,
+    "PRICE" NUMERIC(15,2) NOT NULL,
+    "STOCK" INT NOT NULL
+);
+
+-- migrate:down
+DROP TABLE IF EXISTS _products;
+DROP EXTENSION IF EXISTS "uuid-ossp";

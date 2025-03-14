@@ -11,9 +11,9 @@ import (
 type ProductRepository interface {
 	InsertNewProduct(ctx context.Context, product *models.ProductSchema) (*models.ProductSchema, error)
 	GetAllProducts(ctx context.Context) (*[]models.ProductSchema, error)
-	GetProductByID(ctx context.Context, id int) (*models.ProductSchema, error)
+	GetProductByID(ctx context.Context, id string) (*models.ProductSchema, error)
 	UpdateProduct(ctx context.Context, product *models.ProductSchema) (*models.ProductSchema, error)
-	DeleteProduct(ctx context.Context, id int) error
+	DeleteProduct(ctx context.Context, id string) error
 }
 
 type productRepository struct {
@@ -46,7 +46,7 @@ func (p *productRepository) GetAllProducts(ctx context.Context) (*[]models.Produ
 	return &products, err
 }
 
-func (p *productRepository) GetProductByID(ctx context.Context, id int) (*models.ProductSchema, error) {
+func (p *productRepository) GetProductByID(ctx context.Context, id string) (*models.ProductSchema, error) {
 	product := new(models.ProductSchema)
 	err := p.db.Model(product).
 		Context(ctx).
@@ -86,7 +86,7 @@ func (p *productRepository) UpdateProduct(ctx context.Context, product *models.P
 	return product, nil
 }
 
-func (p *productRepository) DeleteProduct(ctx context.Context, id int) error {
+func (p *productRepository) DeleteProduct(ctx context.Context, id string) error {
 	_, err := p.db.Model((*models.ProductSchema)(nil)).Context(ctx).
 		Where("? = ?", pg.Ident("ID"), id).
 		Delete()

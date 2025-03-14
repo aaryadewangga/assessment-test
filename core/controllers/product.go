@@ -5,7 +5,6 @@ import (
 	"aegis/assessment-test/core/entity"
 	"aegis/assessment-test/core/repository"
 	"aegis/assessment-test/core/repository/models"
-	"aegis/assessment-test/utils/converter"
 	"aegis/assessment-test/utils/middleware"
 	"context"
 	"fmt"
@@ -117,7 +116,7 @@ func (p *ProductController) getAllProduct() echo.HandlerFunc {
 
 func (p *ProductController) getProductById(id string) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		product, err := p.productRepo.GetProductByID(context.Background(), converter.StringToInt(id))
+		product, err := p.productRepo.GetProductByID(context.Background(), id)
 		if err != nil {
 			logrus.Errorf("err get product by id=%s err=%s", id, err.Error())
 			return c.JSON(
@@ -146,7 +145,7 @@ func (p *ProductController) UpdateProductById() echo.HandlerFunc {
 				http.StatusForbidden,
 				constant.UnauthorizeError(constant.CodeErrForbidden, "access denied", nil))
 		}
-		id := converter.StringToInt(c.QueryParam("id"))
+		id := c.QueryParam("id")
 		product := models.ProductSchema{}
 		err := c.Bind(&product)
 		if err != nil {
@@ -159,10 +158,10 @@ func (p *ProductController) UpdateProductById() echo.HandlerFunc {
 		product.ID = id
 		updatedProduct, err := p.productRepo.UpdateProduct(context.Background(), &product)
 		if err != nil {
-			logrus.Errorf("err update product by id=%d err=%s", id, err.Error())
+			logrus.Errorf("err update product by id=%s err=%s", id, err.Error())
 			return c.JSON(
 				http.StatusInternalServerError,
-				constant.InternalServerError(constant.CodeErrInternalServer, fmt.Sprintf("failed to update product by id=%d", id), err))
+				constant.InternalServerError(constant.CodeErrInternalServer, fmt.Sprintf("failed to update product by id=%s", id), err))
 		}
 
 		resp := entity.AddNewProductResponse{
@@ -186,17 +185,17 @@ func (p *ProductController) DeleteProductById() echo.HandlerFunc {
 				http.StatusForbidden,
 				constant.UnauthorizeError(constant.CodeErrForbidden, "access denied", nil))
 		}
-		id := converter.StringToInt(c.QueryParam("id"))
+		id := c.QueryParam("id")
 		err := p.productRepo.DeleteProduct(context.Background(), id)
 		if err != nil {
-			logrus.Errorf("err delete product by id=%d err=%s", id, err.Error())
+			logrus.Errorf("err delete product by id=%s err=%s", id, err.Error())
 			return c.JSON(
 				http.StatusInternalServerError,
-				constant.InternalServerError(constant.CodeErrInternalServer, fmt.Sprintf("failed to delete product by id=%d", id), err))
+				constant.InternalServerError(constant.CodeErrInternalServer, fmt.Sprintf("failed to delete product by id=%s", id), err))
 		}
 
 		return c.JSON(
 			http.StatusOK,
-			constant.Success(constant.CodeSuccess, fmt.Sprintf("success delete product by id=%d", id), nil))
+			constant.Success(constant.CodeSuccess, fmt.Sprintf("success delete product by id=%s", id), nil))
 	}
 }
