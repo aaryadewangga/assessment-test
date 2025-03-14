@@ -22,7 +22,7 @@ func GenerateTransactionExcel(transaction *entity.TransactionResponse) (string, 
 	sheetName := "Transaction"
 	f.SetSheetName("Sheet1", sheetName)
 
-	headers := []string{"Transaction ID", "Date", "Customer", "Total Amount"}
+	headers := []string{"Transaction ID", "UserId", "Total Amount", "Date"}
 	for i, h := range headers {
 		col := string(rune('A' + i))
 		cell := fmt.Sprintf("%s1", col)
