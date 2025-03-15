@@ -3,14 +3,21 @@ package export
 import (
 	"aegis/assessment-test/core/entity"
 	"fmt"
-	"io"
+	"os"
+	"path/filepath"
 
 	"github.com/jung-kurt/gofpdf"
 )
 
-func GenerateTransactionPDF(trx *entity.TransactionResponse, writer io.Writer) error {
-	pdf := gofpdf.New("P", "mm", "A4", "")
+func GenerateTransactionPDF(trx *entity.TransactionResponse) (string, error) {
+	exportDir := "export_pdf"
+	if err := os.MkdirAll(exportDir, os.ModePerm); err != nil {
+		return "", fmt.Errorf("failed to create export directory: %v", err)
+	}
 
+	filePath := filepath.Join(exportDir, fmt.Sprintf("transaction_%s.pdf", trx.ID))
+
+	pdf := gofpdf.New("P", "mm", "A4", "")
 	pdf.AddPage()
 	pdf.SetFont("Arial", "B", 16)
 	pdf.Cell(190, 10, "Transaction Details")
@@ -40,7 +47,11 @@ func GenerateTransactionPDF(trx *entity.TransactionResponse, writer io.Writer) e
 		pdf.CellFormat(30, 8, formatFloat(detail.Subtotal), "1", 1, "C", false, 0, "")
 	}
 
-	return pdf.Output(writer)
+	if err := pdf.OutputFileAndClose(filePath); err != nil {
+		return "", fmt.Errorf("failed to save PDF file: %v", err)
+	}
+
+	return filePath, nil
 }
 
 func formatFloat(value float64) string {

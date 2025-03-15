@@ -40,6 +40,8 @@ func RegisterPath(
 	admin.POST("/products", productCon.AddNewProduct())
 	admin.PUT("/products", productCon.UpdateProductById())
 	admin.DELETE("/products", productCon.DeleteProductById())
+	admin.GET("/users", userCon.GetAllUsers())
+	admin.DELETE("/users", userCon.DeleteUserById())
 
 	// Cashier & Admin Routes
 	e.GET("/products", productCon.GetProduct(), jwtMiddleware)

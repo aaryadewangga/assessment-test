@@ -124,27 +124,25 @@ func (t *TransactionController) GetTransactionDetailsById() echo.HandlerFunc {
 func (t *TransactionController) GetTransactionPDF() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id := c.QueryParam("id")
+
 		data, err := t.fetchTransactionDetailsById(id)
 		if err != nil {
 			return c.JSON(
 				http.StatusInternalServerError,
-				constant.InternalServerError(constant.CodeErrInternalServer, "failed to get details transactions", err))
+				constant.InternalServerError(constant.CodeErrInternalServer, "failed to get details transactions", err),
+			)
 		}
 
-		// Set response sebagai file PDF
-		c.Response().Header().Set("Content-Type", "application/pdf")
-		c.Response().Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=transaction_%s.pdf", id))
-
-		// Generate PDF
-		err = export.GenerateTransactionPDF(data, c.Response().Writer)
+		filePath, err := export.GenerateTransactionPDF(data)
 		if err != nil {
 			logrus.Errorf("failed to generate transaction PDF: %s", err.Error())
 			return c.JSON(
 				http.StatusInternalServerError,
-				constant.InternalServerError(constant.CodeErrInternalServer, "failed to generate pdf", err))
+				constant.InternalServerError(constant.CodeErrInternalServer, "failed to generate pdf", err),
+			)
 		}
 
-		return nil
+		return c.Attachment(filePath, fmt.Sprintf("transaction_%s.pdf", id))
 	}
 }
 
@@ -178,8 +176,6 @@ func (t *TransactionController) GetTransactionExcel() echo.HandlerFunc {
 		}
 		defer file.Close()
 
-		c.Response().Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filepath))
-		c.Response().Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-		return c.Stream(http.StatusOK, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file)
+		return c.Attachment(filepath, fmt.Sprintf("transaction_%s.xlsx", id))
 	}
 }

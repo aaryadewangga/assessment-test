@@ -11,6 +11,8 @@ type UserRepository interface {
 	InsertNewUser(ctx context.Context, user *models.UserSchema) error
 	GetUserByUsername(ctx context.Context, username string) (*models.UserSchema, error)
 	GetUserById(ctx context.Context, id string) (*models.UserSchema, error)
+	GetAllUsers(ctx context.Context) (*[]models.UserSchema, error)
+	DeleteUser(ctx context.Context, id string) error
 }
 
 type userRepository struct {
@@ -52,4 +54,23 @@ func (u *userRepository) GetUserById(ctx context.Context, id string) (*models.Us
 	}
 
 	return user, nil
+}
+
+func (u *userRepository) GetAllUsers(ctx context.Context) (*[]models.UserSchema, error) {
+	user := new([]models.UserSchema)
+
+	if err := u.db.Model(user).
+		Context(ctx).
+		Select(); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (p *userRepository) DeleteUser(ctx context.Context, id string) error {
+	_, err := p.db.Model((*models.UserSchema)(nil)).Context(ctx).
+		Where("? = ?", pg.Ident("ID"), id).
+		Delete()
+	return err
 }

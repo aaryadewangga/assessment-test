@@ -8,7 +8,16 @@ type RegisterRequest struct {
 }
 
 type RegisterResponse struct {
-	Name     string `json:"name"`
-	Username string `json:"username"`
-	Role     string `json:"role"`
+	Name     string  `json:"name"`
+	Username string  `json:"username"`
+	Role     string  `json:"role"`
+	Id       *string `json:"id,omitempty"`
+}
+
+type GetAllUsersResponse struct {
+	Users []RegisterResponse `json:"users"`
+}
+
+type DeleteUserResponse struct {
+	Id string `json:"id"`
 }
